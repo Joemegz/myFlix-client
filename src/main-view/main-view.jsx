@@ -1,42 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 
 export const MainView = () => {
-  const [movies, setMovies] = useState([
-    {
-      id: 1,
-      image:
-        "https://https://https://en.wikipedia.org/wiki/Inception#/media/File:Inception_(2010)_theatrical_poster.jpg",
-      title: "Inception",
-      Description:
-        "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.",
-      Genre: "Thriller",
-      Director: "Christopher Nolan"
-    },
-    {
-      id: 2,
-      image:
-        "https://https://xmenmovies.fandom.com/wiki/Logan_(film)/Gallery?file=488e8de605ef4589b9515e3a759cf867.jpg",
-      title: "Logan",
-      Description:
-        "In a future where mutants are nearly extinct, an elderly and weary Logan leads a quiet life. But when Laura, a mutant child pursued by scientists, comes to him for help, he must get her to safety.",
-      Genre: "Action",
-      Director: "James Mangold"
-    },
-    {
-      id: 3,
-      image:
-        "https://https://marvel-movies.fandom.com/wiki/Deadpool_(film)/Gallery?file=Deadpool.jpg",
-      title: "Deadpool",
-      Description:
-        "A wisecracking mercenary gets experimented on and becomes immortal but ugly, and sets out to track down the man who ruined his looks.",
-      Genre: "Action",
-      Director: "Tim Miller"
-    }
-  ]);
+  const [movies, setMovies] = useState([]);
 
   const [selectedMovie, setSelectedMovie] = useState(null);
+
+  useEffect(() => {
+    fetch("https://myflix2023.herokuapp.com/movies") //fetching endpoint
+      .then((response) => response.json()) //response parsed in json
+      .then((data) => {
+        console.log("data", data);
+        //makes data usable
+        const moviesFromApi = data.map((movie) => {
+          //set variable to constant
+          return {
+            id: movie._id,
+            title: movie.Title,
+            image: movie.ImagePath,
+            description: movie.Description,
+            genre: movie.Genre.Name,
+            director: movie.Director.Name
+          };
+        });
+        setMovies(moviesFromApi);
+      });
+  }, []);
+  //Passing an empty dependency array ([ ]) as a second argument to useEffect() tells React that your callback doesn’t depend on any value changes in props or state, so it never needs to rerun.
 
   if (selectedMovie) {
     return (
