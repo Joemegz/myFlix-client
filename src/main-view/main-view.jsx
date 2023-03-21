@@ -7,6 +7,17 @@ export const MainView = () => {
 
   const [selectedMovie, setSelectedMovie] = useState(null);
 
+ 
+  // useEffect(() => {
+  //   fetch("https://myflix2023.herokuapp.com/users/Josh")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("books from api:", data);
+  //     });
+  // }, []);
+ 
+ 
+ 
   useEffect(() => {
     fetch("https://myflix2023.herokuapp.com/movies") //fetching endpoint
       .then((response) => response.json()) //response parsed in json
@@ -27,7 +38,7 @@ export const MainView = () => {
         setMovies(moviesFromApi);
       });
   }, []);
-  //Passing an empty dependency array ([ ]) as a second argument to useEffect() tells React that your callback doesn’t depend on any value changes in props or state, so it never needs to rerun.
+  // Passing an empty dependency array ([ ]) as a second argument to useEffect() tells React that your callback doesn’t depend on any value changes in props or state, so it never needs to rerun.
 
   if (selectedMovie) {
     return (
