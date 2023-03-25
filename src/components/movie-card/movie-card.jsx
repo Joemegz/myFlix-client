@@ -1,4 +1,4 @@
-import PropTypes from "prop-types"; //imports the proptype library
+import PropTypes from "prop-types"; //imports the prop-type library
 
 export const MovieCard = ({ movie, onMovieClick }) => {
   return (
@@ -18,13 +18,7 @@ MovieCard.propTypes = {
     title: PropTypes.string.isRequired,
     image: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    genre: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-    }).isRequired,
-    director: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-    }).isRequired,
+    genre: PropTypes.string.isRequired,
+    director: PropTypes.string.isRequired}),
   onMovieClick: PropTypes.func.isRequired //prop object must contain onMovieClick and must be a function
-})};
+};
