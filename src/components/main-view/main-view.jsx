@@ -64,12 +64,12 @@ export const MainView = () => {
           />
         </Col>
       ) : movies.length === 0 ? (
-        <div>The list is empty!</div>
+        <Col>The list is empty!</Col>
       ) : 
       (
         <>
           {movies.map((movie) => (
-            <Col className="mb-5" key={movie.id} md={3}>
+            <Col className="mb-4" key={movie.id} md={3}>
               <MovieCard
                 movie={movie}
                 onMovieClick={(newSelectedMovie) => {
