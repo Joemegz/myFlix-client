@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types"; //imports the prop-type library
 import { Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import "./movie-card.scss";
 
 export const MovieCard = ({ movie }) => {
   return ( 
@@ -26,6 +25,5 @@ MovieCard.propTypes = {
     image: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     genre: PropTypes.string.isRequired,
-    director: PropTypes.string.isRequired}),
-  onMovieClick: PropTypes.func.isRequired //prop object must contain onMovieClick and must be a function
+    director: PropTypes.string.isRequired})
 };
