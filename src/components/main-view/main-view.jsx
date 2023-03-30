@@ -10,10 +10,9 @@ import Col from "react-bootstrap/Col";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
-  // const storedUser = JSON.parse(localStorage.getItem("user"));
-  // const storedToken = localStorage.getItem("token");
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedToken = localStorage.getItem("token");
   const [movies, setMovies] = useState([]);
-  
   const [user, setUser] = useState();
   const [token, setToken] = useState();
   
@@ -52,6 +51,8 @@ export const MainView = () => {
       <NavigationBar
         user={user}
         onLoggedOut={() => {
+          setUser(null);
+          setToken(null);
           localStorage.clear();
         }}
       />

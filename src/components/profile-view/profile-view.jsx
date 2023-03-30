@@ -1,55 +1,53 @@
 import { useState } from "react";
 import { Card, Col, Form, Button } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
+import { Button, Container, Form, Row, Col, Card } from "react-bootstrap";
 
-export const ProfileView = ({ user, token, movies, onLoggedOut, updateUser }) => {
+export const ProfileView = ({ user, movies }) => {
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const storedToken = localStorage.getItem("token");
+    const storedMovies = JSON.parse(localStorage.getItem("movies"))
+    const storedUser = localStorage.getItem("user");
+
+
+    const [token] = useState(storedToken ? storedToken : null);
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
     const [birthday, setBirthday] = useState("");
+    const [favoriteMovies, setFavoriteMovies] = useState([]);
 
-    let favoriteMovies = movies.filter(movie => user.favoriteMovies.includes(movie.id));
     
     const handleSubmit = event => {
         event.preventDefault();
 
-        const data = {
-            username,
-            password,
-            email,
-            birthday
-        }
+        
 
-        fetch(`https://myflix2023.herokuapp.com/users/:Username`, {
-            method: "PUT",
-            body: JSON.stringify(data),
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                alert("Changing user data failed");
-                return false;
-            }
-        })
-        .then(user => {
-            if (user) {
-                alert("Successfully changed user data");
-                updateUser(user);
-            }
-        })
-        .catch(e => {
-            alert(e);
-        });
-    }
+// Show updated user on the profile
+const getUser = (token) => {
+    fetch(`https://myflix2023.herokuapp.com/users/${user.Username}`,{
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}`},
+    }).then(response => response.json())
+    .then((response) => {
+      console.log("getUser response", response)
+      setUsername(response.Username);
+      setEmail(response.Email);
+      setPassword(response.Password);
+      setBirthday(response.Birthday);
+      setFavoriteMovies(response.FavoriteMovies)
+    })
+  }
 
+  useEffect(()=> {
+    getUser(token);
+  },[])
+
+};
+  //Deregister
     const deleteAccount = () => {
-        console.log("doin")
+        console.log("working")
         fetch(`https://myflix2023.herokuapp.com/users/${username}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` }
@@ -74,7 +72,7 @@ export const ProfileView = ({ user, token, movies, onLoggedOut, updateUser }) =>
             <Col md={6}>           
                 <Card className="mt-2 mb-3">
                     <Card.Body>
-                        <Card.Title >Your info</Card.Title>
+                        <Card.Title >User Info</Card.Title>
                         <p>Username: {username}</p>
                         <p>Email: {email}</p>
                         <p>Birthday: {birthday}</p>
@@ -89,7 +87,7 @@ export const ProfileView = ({ user, token, movies, onLoggedOut, updateUser }) =>
             <Col md={6}>
                 <Card className="mt-2 mb-3">
                     <Card.Body>
-                        <Card.Title>Update your info</Card.Title>
+                        <Card.Title>Update User</Card.Title>
                         <Form onSubmit={handleSubmit}>
                             <Form.Group>
                                 <Form.Label>Username:</Form.Label>
