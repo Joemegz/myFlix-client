@@ -1,11 +1,67 @@
+import PropTypes from "prop-types";
+import { Button, Col } from "react-bootstrap";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import './movie-view.scss';
+import { useEffect, useState } from "react";
 
-export const MovieView = ({ movies }) => {
- 
-  const {movieID} = useParams();
-  const movie = movies.find((m) => m.id === movieID);
+export const MovieView = ({ movies, user, token, updateUser }) => {
+  const { movieId } = useParams();
+  const movie = movies.find(m => m.id === movieId);
+
+  useEffect(() => {
+      setIsFavorite(user.favoriteMovies(movie.Id));
+      window.scrollTo(0, 0);
+  }, [movieId])
+
+  const addFavorite = () => {
+      fetch(`https://myflix2023.herokuapp.com/users/${user.username}/movies/${movieId}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+          if (response.ok) {
+              return response.json();
+          } else {
+              alert("Failed");
+              return false;
+          }
+      })
+      .then(user => {
+          if (user) {
+              alert("Successfully added to favorites");
+              setIsFavorite(true);
+              updateUser(user);
+          }
+      })
+      .catch(e => {
+          alert(e);
+      });
+  }
+
+  const removeFavorite = () => {
+      fetch(`https://myflix2023.herokuapp.com/users/${user.username}/movies/${movieId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+          if (response.ok) {
+              return response.json();
+          } else {
+              alert("Failed");
+              return false;
+          }
+      })
+      .then(user => {
+          if (user) {
+              alert("Successfully deleted from favorites");
+              setIsFavorite(false);
+              updateUser(user);
+          }
+      })
+      .catch(e => {
+          alert(e);
+      });
+  }
   
   
   return (
@@ -32,6 +88,21 @@ export const MovieView = ({ movies }) => {
       <Link to={'/'}>
         <button className="back-button">Back</button>
       </Link>
+      {isFavorite ? 
+                        <Button variant="danger" className="ms-2" onClick={removeFavorite}>Remove from favorites</Button>
+                        : <Button variant="success" className="ms-2" onClick={addFavorite}>Add to favorites</Button>
+                    }   
     </div>
   );
+};
+
+MovieView.propTypes = {
+  movies: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      genre: PropTypes.string.isRequired,
+      director: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired
+  }).isRequired)
 };

@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Card, Col, Form, Button } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
-import { Button, Container, Form, Row, Col, Card } from "react-bootstrap";
 
 export const ProfileView = ({ user, movies }) => {
 
     const storedToken = localStorage.getItem("token");
-    const storedMovies = JSON.parse(localStorage.getItem("movies"))
-    const storedUser = localStorage.getItem("user");
+   
 
 
     const [token] = useState(storedToken ? storedToken : null);
@@ -16,8 +14,8 @@ export const ProfileView = ({ user, movies }) => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [birthday, setBirthday] = useState("");
-    const [favoriteMovies, setFavoriteMovies] = useState([]);
 
+    let favoriteMovies = movies.filter(movie => user.favoriteMovies.includes(movie.id));
     
     const handleSubmit = event => {
         event.preventDefault();
@@ -138,7 +136,7 @@ const getUser = (token) => {
             </Col>
             <Col md={12}>
                 <h3 className="mt-3 mb-3 text-light">Your favorite movies:</h3>
-            </Col>
+                </Col>
             {favoriteMovies.map(movie => (
                 <Col className="mb-4" key={movie.id} xl={2} lg={3} md={4} xs={6}>
                     <MovieCard movie={movie} />
