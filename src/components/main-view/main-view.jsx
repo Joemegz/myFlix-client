@@ -15,12 +15,11 @@ export const MainView = () => {
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState();
   const [token, setToken] = useState();
-  
-  const updateUser = user => {
+
+  const updateUser = (user) => {
     setUser(user);
     localStorage.setItem("user", JSON.stringify(user));
-} 
-
+  };
 
   useEffect(() => {
     if (!token) {
@@ -96,15 +95,21 @@ export const MainView = () => {
 
           <Route
             path="/profile"
-              element={
-                !user ? (
-                 <Navigate to="/login" replace />
-                  ) : (
-                  <ProfileView user={user} token={token} movies={movies} onLoggedOut={() => {
-                      localStorage.clear();
-                      }} updateUser = {updateUser}/>
-                    )
-                  }
+            element={
+              !user ? (
+                <Navigate to="/login" replace />
+              ) : (
+                <ProfileView
+                  user={user}
+                  token={token}
+                  movies={movies}
+                  onLoggedOut={() => {
+                    localStorage.clear();
+                  }}
+                  updateUser={updateUser}
+                />
+              )
+            }
           />
           <Route //this route opens individual movie
             path="/movies/:movieID"
@@ -116,7 +121,12 @@ export const MainView = () => {
                   <Col>The list is empty!</Col>
                 ) : (
                   <Col md={8}>
-                    <MovieView movies={movies} user={user} token={token} updateUser={updateUser} />
+                    <MovieView
+                      movies={movies}
+                      user={user}
+                      token={token}
+                      updateUser={updateUser}
+                    />
                   </Col>
                 )}
               </>

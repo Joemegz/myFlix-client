@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Card, Col, Form, Button } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
-
-export const ProfileView = ({ user, movies }) => {
+export const ProfileView = ({ user, movies, updateUser }) => {
 
     const storedToken = localStorage.getItem("token");
    
@@ -10,39 +9,54 @@ export const ProfileView = ({ user, movies }) => {
 
     const [token] = useState(storedToken ? storedToken : null);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [birthday, setBirthday] = useState("");
 
-    let favoriteMovies = movies.filter(movie => user.favoriteMovies.includes(movie.id));
+
+
+    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie.id));
     
+
+
     const handleSubmit = event => {
         event.preventDefault();
 
-        
+        const data = {
+            username,
+            password,
+            email,
+            birthday
+        }
 
-// Show updated user on the profile
-const getUser = (token) => {
-    fetch(`https://myflix2023.herokuapp.com/users/${user.Username}`,{
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}`},
-    }).then(response => response.json())
-    .then((response) => {
-      console.log("getUser response", response)
-      setUsername(response.Username);
-      setEmail(response.Email);
-      setPassword(response.Password);
-      setBirthday(response.Birthday);
-      setFavoriteMovies(response.FavoriteMovies)
-    })
-  }
 
-  useEffect(()=> {
-    getUser(token);
-  },[])
-
-};
+        fetch(`https://myflix2023.herokuapp.com/users/${username}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                alert("Changing user data failed");
+                return false;
+            }
+        })
+        .then(user => {
+            if (user) {
+                alert("Successfully changed userdata");
+                updateUser(user);
+            }
+        })
+        .catch(e => {
+            alert(e);
+        });
+    }
   //Deregister
     const deleteAccount = () => {
         console.log("working")
@@ -53,7 +67,7 @@ const getUser = (token) => {
         .then(response => {
             if (response.ok) {
                 alert("Your account has been deleted. Good Bye!");
-                onLoggedOut();
+                localStorage.clear();
             } else {
                 alert("Could not delete account");
             }
@@ -63,7 +77,6 @@ const getUser = (token) => {
         });
     }
 
-   
 
     return (
         <>
@@ -71,9 +84,9 @@ const getUser = (token) => {
                 <Card className="mt-2 mb-3">
                     <Card.Body>
                         <Card.Title >User Info</Card.Title>
-                        <p>Username: {username}</p>
-                        <p>Email: {email}</p>
-                        <p>Birthday: {birthday}</p>
+                        <p>Username: {user.Username}</p>
+                        <p>Email: {user.Email}</p>
+                        <p>Birthday: {user.Birthday.slice(0, 10)}</p>
                     </Card.Body>
                 </Card>
                 <Button variant="danger" onClick={() => {
@@ -105,7 +118,7 @@ const getUser = (token) => {
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                     required
-                                    minLength="8"
+                                    minLength="6"
                                     className="bg-light"
                                 />
                             </Form.Group>
@@ -135,7 +148,7 @@ const getUser = (token) => {
                 </Card>
             </Col>
             <Col md={12}>
-                <h3 className="mt-3 mb-3 text-light">Your favorite movies:</h3>
+                <h3 className="mt-3 mb-3 text-dark">Your favorite movies:</h3>
                 </Col>
             {favoriteMovies.map(movie => (
                 <Col className="mb-4" key={movie.id} xl={2} lg={3} md={4} xs={6}>
