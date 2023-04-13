@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, Col, Form, Button } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
+import { useNavigate } from "react-router-dom";
 export const ProfileView = ({ user, movies, updateUser }) => {
 
     const storedToken = localStorage.getItem("token");
@@ -13,7 +14,7 @@ export const ProfileView = ({ user, movies, updateUser }) => {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [birthday, setBirthday] = useState("");
-
+    const navigate = useNavigate();
 
 
     let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie.id));
@@ -24,12 +25,11 @@ export const ProfileView = ({ user, movies, updateUser }) => {
         event.preventDefault();
 
         const data = {
-            username,
-            password,
-            email,
-            birthday
-        }
-
+            Username: username,
+            Password: password,
+            Email: email,
+            Birthday: birthday
+          };
 
         fetch(`https://myflix2023.herokuapp.com/users/${username}`, {
             method: "PUT",
@@ -49,7 +49,7 @@ export const ProfileView = ({ user, movies, updateUser }) => {
         })
         .then(user => {
             if (user) {
-                alert("Successfully changed userdata");
+                alert("Successfully changed user data");
                 updateUser(user);
             }
         })
@@ -59,7 +59,6 @@ export const ProfileView = ({ user, movies, updateUser }) => {
     }
   //Deregister
     const deleteAccount = () => {
-        console.log("working")
         fetch(`https://myflix2023.herokuapp.com/users/${username}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` }
@@ -67,7 +66,8 @@ export const ProfileView = ({ user, movies, updateUser }) => {
         .then(response => {
             if (response.ok) {
                 alert("Your account has been deleted. Good Bye!");
-                localStorage.clear();
+                
+                navigate("/signup");
             } else {
                 alert("Could not delete account");
             }

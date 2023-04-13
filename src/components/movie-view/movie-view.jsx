@@ -12,12 +12,6 @@ export const MovieView = ({ movies, user, token, updateUser }) => {
   const [isFavorite, setIsFavorite] = useState(null);
 
 
-  useEffect(() => {
-    setIsFavorite(user.FavoriteMovies.includes(movieID));
-    window.scrollTo(0, 0);
-  }, [movieID]);
-
-
   const addFavorite = () => {
     fetch(
       `https://myflix2023.herokuapp.com/users/${user.Username}/${movieID}`,
